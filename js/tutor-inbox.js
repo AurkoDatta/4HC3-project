@@ -24,38 +24,44 @@ function preferredText(r) {
 
 function card(r) {
   let body = '';
-  const top = '<div class="top"><span class="code">' + esc(r.course) + '</span><span class="tag ' + r.urgency + '">' + URGENCY_LABEL[r.urgency] + '</span></div>' +
-    '<div class="small muted" style="margin-bottom:.3rem">' + esc(r.studentName || myName()) + '</div>';
+  const top = '<div class="ib-row"><span class="tag info">' + esc(r.course) + '</span><span class="tag ' + r.urgency + '">' + URGENCY_LABEL[r.urgency] + '</span></div>' +
+    '<p class="ib-name">' + esc(r.studentName || myName()) + '</p>';
+  let pin = '';
   if (r.status === 'new') {
-    body = '<div class="preview">' + esc(r.question) + '</div>' +
-      '<div class="meta"><span class="tag grey">' + (r.mode === 'online' ? 'Online' : 'In person') + '</span> ' + esc(preferredText(r)) + '</div>' +
-      '<div style="margin-bottom:.5rem"><button class="link-btn small" type="button" data-history="' + r.id + '">View history</button></div>' +
-      '<div class="actions"><button class="btn btn-danger btn-sm" type="button" data-decline="' + r.id + '">Decline</button>' +
+    pin = pinHtml('');
+    body = '<p class="ib-q">' + esc(r.question) + '</p>' +
+      '<div class="ib-meta"><span class="tag grey">' + (r.mode === 'online' ? 'Online' : 'In person') + '</span><span>' + esc(preferredText(r)) + '</span></div>' +
+      '<div><button class="link-btn ib-hist" type="button" data-history="' + r.id + '">View history</button></div>' +
+      '<div class="ib-actions"><button class="btn btn-danger btn-sm" type="button" data-decline="' + r.id + '">Decline</button>' +
       '<button class="btn btn-good btn-sm" type="button" data-accept="' + r.id + '">Accept</button></div>';
   } else if (r.status === 'active') {
     const b = r.booking;
-    body = '<div class="preview">' + esc(r.question) + '</div>' +
-      '<div class="meta"><b>' + fmtDate(b.date) + ', ' + fmtRange(b.start, b.end) + '</b><br>' + esc(b.place) + '</div>' +
-      '<div class="actions"><button class="btn btn-sm" type="button" data-message="' + r.id + '">Message</button>' +
+    pin = pinHtml('ink');
+    body = '<p class="ib-q">' + esc(r.question) + '</p>' +
+      '<div class="ib-when"><b>' + fmtDate(b.date) + ', ' + fmtRange(b.start, b.end) + '</b><span>' + esc(b.place) + '</span></div>' +
+      '<div class="ib-actions wrap"><button class="btn btn-sm" type="button" data-message="' + r.id + '">Message</button>' +
       '<button class="btn btn-sm" type="button" data-resched="' + r.id + '">Reschedule</button>' +
       '<button class="btn btn-sm" type="button" data-complete="' + r.id + '">Mark complete</button></div>';
   } else {
     const b = r.booking;
-    body = '<div class="preview">' + esc(r.question) + '</div>' +
-      '<div class="meta">' + fmtDate(b.date) + ', ' + fmtRange(b.start, b.end) + '<br>' +
-      (r.rating ? stars(r.rating) : '<span class="muted">No rating yet</span>') + ' ' +
+    pin = pinHtml('yellow');
+    body = '<p class="ib-date">' + fmtDate(b.date) + ', ' + fmtRange(b.start, b.end) + '</p>' +
+      '<div class="ib-row">' + (r.rating ? stars(r.rating) : '<span class="ib-norate">No rating yet</span>') +
       '<span class="tag ' + (r.paid ? 'info' : 'good') + '">' + r.hours + ' h, ' + (r.paid ? 'paid' : 'volunteer') + '</span></div>';
   }
-  return '<article class="req-card" draggable="true" data-id="' + r.id + '">' + top + body + '</article>';
+  return '<article class="req-card st-' + r.status + '" draggable="true" data-id="' + r.id + '">' + top + body + pin + '</article>';
 }
 
 function render() {
   if (role() === 'guest') {
-    requireLogin('Sign in as a tutor to see student requests.', 'Request inbox', 'envelope');
+    requireLogin('Sign in as a tutor to see student requests.', 'Request inbox', 'lamp');
     return;
   }
   if (role() !== 'tutor') {
-    document.getElementById('main').innerHTML = '<div class="card empty"><h2>This page is for tutors</h2><p>You are signed in as a student. Sign out and use a tutor account to see requests.</p></div>';
+    document.getElementById('main').innerHTML =
+      '<div class="page-head"><h1>Request inbox</h1></div>' +
+      '<div class="sheet gate">' + linesHtml('plain', '-10px 0 -30px 0') + doodleImg('lamp', 70, 66.5) +
+      '<h2>This page is for tutors</h2><p>You are signed in as a student. Sign out and use a tutor account to see requests.</p>' + pinHtml('') + '</div>';
     return;
   }
   const list = myRequests();
@@ -78,12 +84,12 @@ function render() {
 
   document.getElementById('main').innerHTML =
     '<div class="page-head"><h1>Request inbox</h1><p>Signed in as ' + esc(me().name) + '. Drag a card to the next column or use the buttons.</p></div>' +
-    '<div class="stat-row"><div class="stat"><b>' + (paid + vol) + ' h</b>Total hours</div><div class="stat"><b>' + paid + ' h</b>Paid</div>' +
-    '<div class="stat"><b>' + vol + ' h</b>Volunteer</div><div class="stat"><b>' + avg + '</b>Average rating</div>' +
-    '<div class="stat" style="display:flex;align-items:center"><button class="btn btn-sm" type="button" id="exportHours">' + icon('download', 14) + ' Export volunteer hours</button></div></div>' +
+    '<div class="ib-stats"><div class="ib-stat yellow"><b>' + (paid + vol) + ' h</b><span>Total hours</span></div><div class="ib-stat pink"><b>' + paid + ' h</b><span>Paid</span></div>' +
+    '<div class="ib-stat mint"><b>' + vol + ' h</b><span>Volunteer</span></div><div class="ib-stat sky"><b>' + avg + '</b><span>Average rating</span></div>' +
+    '<div class="ib-export">' + doodleImg('trophy', 40, 38) + '<button class="btn btn-sm" type="button" id="exportHours">' + icon('download', 14) + ' Export volunteer hours</button></div></div>' +
     '<div class="board">' + ['new', 'active', 'done'].map(function (k) {
-      return '<section class="col" data-col="' + k + '" aria-label="' + titles[k] + ' requests"><div class="col-head"><span>' + titles[k] + '</span><span class="count">' + cols[k].length + '</span></div>' +
-        (cols[k].length ? cols[k].map(card).join('') : '<p class="small muted" style="text-align:center;padding:1rem 0">' + empties[k] + '</p>') + '</section>';
+      return '<section class="col" data-col="' + k + '" aria-label="' + titles[k] + ' requests"><div class="col-head"><span class="col-title">' + titles[k] + '</span><span class="count">' + cols[k].length + '</span></div>' +
+        (cols[k].length ? cols[k].map(card).join('') : '<div class="ib-empty">' + doodleImg('star', 26, 26) + '<p>' + empties[k] + '</p></div>') + '</section>';
     }).join('') + '</div>';
 
   wire();
@@ -155,8 +161,8 @@ function openAccept(r, isResched) {
   const prefKeys = {};
   r.preferred.forEach(function (p) { prefKeys[p.date + '|' + p.start] = true; });
   let picked = null;
-  let html = '<p><b>' + esc(r.studentName || myName()) + '</b> asked about <b>' + esc(r.course) + '</b> (' + (r.mode === 'online' ? 'online' : 'in person') + ').</p>' +
-    '<p class="small"><span class="slot pref" style="display:inline-block;cursor:default">green</span> are times the student prefers, grey ones are already booked.</p>' +
+  let html = '<div class="ib-dlg"><p><b>' + esc(r.studentName || myName()) + '</b> asked about <b>' + esc(r.course) + '</b> (' + (r.mode === 'online' ? 'online' : 'in person') + ').</p>' +
+    '<div class="ib-legend"><span class="slot pref">green</span><span> are times the student prefers, grey ones are already booked.</span></div>' +
     '<div class="field" id="slotField"><label>Pick a time <span class="req">*</span></label>';
   let last = '';
   slots.forEach(function (x, i) {
@@ -167,20 +173,21 @@ function openAccept(r, isResched) {
     }
     const k = x.date + '|' + x.start;
     const busy = !!taken[k];
-    html += '<button class="slot' + (prefKeys[k] ? ' pref' : '') + '" type="button" data-slot="' + i + '"' + (busy ? ' disabled title="Already booked"' : '') + ' aria-pressed="false">' + fmtRange(x.start, x.end) + '</button>';
+    html += '<span class="slot-wrap' + (busy ? ' busy' : '') + '"><button class="slot' + (prefKeys[k] ? ' pref' : '') + '" type="button" data-slot="' + i + '"' + (busy ? ' disabled' : '') + ' aria-pressed="false">' + fmtRange(x.start, x.end) + '</button></span>';
   });
   if (last) html += '</div>';
   html += '</div>' +
     '<div class="grid cols-2"><div class="field"><label for="mode">Format</label><select id="mode">' +
     me().modes.map(function (m) { return '<option value="' + m + '"' + (m === r.mode ? ' selected' : '') + '>' + (m === 'online' ? 'Online' : 'In person') + '</option>'; }).join('') + '</select></div>' +
-    '<div class="field" id="placeField"><label for="room">Meeting place</label><input type="text" id="room" placeholder="e.g. ITB 217" value="ITB 217"></div></div>';
+    '<div class="field" id="placeField"><label for="room">Meeting place</label><input type="text" id="room" placeholder="e.g. ITB 217" value="ITB 217"></div></div></div>';
 
   const m = openModal({
     title: isResched ? 'Reschedule session' : 'Accept request and book a time',
     html: html,
     wide: true,
+    tapeStyle: 'left:381px;top:-13px',
     actions: [
-      { label: 'Cancel' },
+      { label: 'Cancel', kind: 'ghost' },
       {
         label: isResched ? 'Save new time' : 'Confirm booking', kind: 'good', onClick: function (close, ov) {
           const sf = ov.querySelector('#slotField');
@@ -199,11 +206,13 @@ function openAccept(r, isResched) {
           const pf = ov.querySelector('#placeField');
           const oe = pf.querySelector('.error');
           if (oe) oe.remove();
+          pf.classList.remove('has-error');
           if (mode === 'in person' && !room) {
             const e = document.createElement('div');
             e.className = 'error';
             e.textContent = 'Where will you meet?';
             pf.appendChild(e);
+            pf.classList.add('has-error');
             ok = false;
           }
           if (!ok) return false;
@@ -244,11 +253,11 @@ function book(r, slot, mode, place, isResched) {
 function openDecline(r) {
   openModal({
     title: 'Decline request',
-    html: '<p>Tell ' + esc(r.studentName || 'the student') + ' why, so they are not left guessing.</p>' +
+    html: '<div class="ib-dlg"><p>Tell ' + esc(r.studentName || 'the student') + ' why, so they are not left guessing.</p>' +
       '<div class="field"><label for="reason">Reason <span class="req">*</span></label><select id="reason">' + REASONS.map(function (x) { return '<option>' + esc(x) + '</option>'; }).join('') + '</select></div>' +
-      '<div class="field"><label for="note">Add a note (optional)</label><textarea id="note" style="min-height:70px"></textarea></div>',
+      '<div class="field"><label for="note">Add a note (optional)</label><textarea id="note" style="min-height:70px"></textarea></div></div>',
     actions: [
-      { label: 'Cancel' },
+      { label: 'Cancel', kind: 'ghost' },
       {
         label: 'Decline request', kind: 'danger', onClick: function (close, ov) {
           const reason = ov.querySelector('#reason').value;
@@ -291,19 +300,19 @@ function openHistory(r) {
     notes: [],
     shaky: []
   };
-  const html =
+  const html = '<div class="ib-dlg ib-hist-dlg">' +
     '<h3>Past questions</h3>' + (file.questions.length ? '<ul>' + file.questions.map(function (q) { return '<li><b>' + esc(q.course) + '</b> (' + fmtDate(q.date) + '): ' + esc(q.q) + '</li>'; }).join('') + '</ul>' : '<p class="muted">No earlier questions from this student.</p>') +
     '<h3>Session notes</h3>' + (file.notes.length ? '<ul>' + file.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>' : '<p class="muted">No notes yet.</p>') +
-    '<h3>Topics still shaky</h3>' + (file.shaky.length ? '<div class="row-flex">' + file.shaky.map(function (t) { return '<span class="tag medium">' + esc(t) + '</span>'; }).join('') + '</div>' : '<p class="muted">Nothing flagged.</p>');
+    '<h3>Topics still shaky</h3>' + (file.shaky.length ? '<div class="row-flex">' + file.shaky.map(function (t) { return '<span class="tag medium">' + esc(t) + '</span>'; }).join('') + '</div>' : '<p class="muted">Nothing flagged.</p>') + '</div>';
   openModal({ title: name + ': history', html: html, actions: [{ label: 'Close', kind: 'primary' }] });
 }
 
 function openMessage(r) {
   openModal({
     title: 'Message ' + (r.studentName || 'student'),
-    html: '<div class="field"><label for="msg">Message</label><textarea id="msg" placeholder="e.g. Please bring your draft prototype."></textarea></div>',
+    html: '<div class="ib-dlg"><div class="field"><label for="msg">Message</label><textarea id="msg" placeholder="e.g. Please bring your draft prototype."></textarea></div></div>',
     actions: [
-      { label: 'Cancel' },
+      { label: 'Cancel', kind: 'ghost' },
       {
         label: 'Send', kind: 'primary', onClick: function (close, ov) {
           const text = ov.querySelector('#msg').value.trim();
@@ -325,10 +334,10 @@ function openComplete(r) {
   const planned = (parseInt(b.end, 10) - parseInt(b.start, 10)) || 1;
   openModal({
     title: 'Mark session complete',
-    html: '<p>' + esc(r.course) + ' with ' + esc(r.studentName || myName()) + ' on ' + fmtDate(b.date) + '.</p>' +
-      '<div class="field"><label for="hours">Hours to log</label><input type="number" id="hours" min="0.5" max="4" step="0.5" value="' + planned + '"></div>',
+    html: '<div class="ib-dlg"><p>' + esc(r.course) + ' with ' + esc(r.studentName || myName()) + ' on ' + fmtDate(b.date) + '.</p>' +
+      '<div class="field"><label for="hours">Hours to log</label><input type="number" id="hours" min="0.5" max="4" step="0.5" value="' + planned + '"></div></div>',
     actions: [
-      { label: 'Cancel' },
+      { label: 'Cancel', kind: 'ghost' },
       {
         label: 'Move to Done', kind: 'primary', onClick: function (close, ov) {
           const h = parseFloat(ov.querySelector('#hours').value);
