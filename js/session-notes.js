@@ -21,7 +21,7 @@ function notesFor(r) {
 }
 
 function render() {
-  if (!requireLogin('Sign in to see your session notes.')) return;
+  if (!requireLogin('Sign in to see your session notes.', 'Session notes', 'pencil')) return;
   const r = findRequest();
   if (!r || !r.booking || r.studentKey !== 'me') {
     document.getElementById('main').innerHTML = '<div class="card empty"><h2>Session not found</h2><a class="btn" href="' + href('my-events.html') + '">Back to My events</a></div>';

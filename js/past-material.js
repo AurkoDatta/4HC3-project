@@ -26,7 +26,7 @@ function byDate(a, b) {
 }
 
 function render() {
-  if (!requireLogin('Sign in to see your past questions, notes and tutors.')) return;
+  if (!requireLogin('Sign in to see your past questions, notes and tutors.', 'Past material', 'box')) return;
   const codes = courseOptions();
 
   const qa = PAST_QA.filter(function (q) {

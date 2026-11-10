@@ -1,7 +1,7 @@
 startPage('');
 
 function render() {
-  if (!requireLogin('Sign in to see your profile.')) return;
+  if (!requireLogin('Sign in to see your profile.', 'Profile', 'lamp')) return;
   const u = currentUser();
   const points = u.teachingPoints || {};
 

@@ -9,7 +9,7 @@ function dateKey(y, m, d) {
 }
 
 function render() {
-  if (!requireLogin('Sign in to see your calendar.')) return;
+  if (!requireLogin('Sign in to see your calendar.', 'Calendar', 'cal')) return;
   const events = calendarEvents();
   const first = new Date(year, month, 1);
   const days = new Date(year, month + 1, 0).getDate();

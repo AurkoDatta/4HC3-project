@@ -39,21 +39,56 @@ function esc(s) {
 }
 
 const ICONS = {
-  search: '<circle cx="11" cy="11" r="6"/><line x1="16" y1="16" x2="21" y2="21"/>',
-  pin: '<path d="M12 21s-6-5.5-6-11a6 6 0 1 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>',
-  filter: '<path d="M4 5h16l-6 8v6l-4-2v-4z"/>',
-  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
-  bell: '<path d="M6 17v-6a6 6 0 0 1 12 0v6l2 2H4z"/><path d="M10 21h4"/>',
-  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/>',
-  close: '<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>',
-  check: '<path d="M5 12l5 5 9-10"/>',
-  download: '<path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><line x1="5" y1="20" x2="19" y2="20"/>',
-  back: '<line x1="19" y1="12" x2="5" y2="12"/><path d="M11 6l-6 6 6 6"/>'
+  search: '<path d="M17 10.5C17 14.0899 14.0899 17 10.5 17C6.91015 17 4 14.0899 4 10.5C4 6.91015 6.91015 4 10.5 4C14.0899 4 17 6.91015 17 10.5Z" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M15.5 15.6L20.5 20.8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  pin: '<path d="M12 21.2C12 21.2 5.4 15.2 5.4 10C5.4 8.24957 6.09536 6.57084 7.3331 5.3331C8.57084 4.09536 10.2496 3.4 12 3.4C13.7504 3.4 15.4292 4.09536 16.6669 5.3331C17.9046 6.57084 18.6 8.24957 18.6 10C18.6 15.2 12 21.2 12 21.2Z" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M14.3 9.8C14.3 11.0703 13.2703 12.1 12 12.1C10.7297 12.1 9.7 11.0703 9.7 9.8C9.7 8.52975 10.7297 7.5 12 7.5C13.2703 7.5 14.3 8.52975 14.3 9.8Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  filter: '<path d="M3.5 5H20.5L13.9 13V18.6L10.1 20.6V13L3.5 5Z" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  user: '<path d="M15.8 8C15.8 10.0987 14.0987 11.8 12 11.8C9.90132 11.8 8.2 10.0987 8.2 8C8.2 5.90132 9.90132 4.2 12 4.2C14.0987 4.2 15.8 5.90132 15.8 8Z" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M4.6 20.4C5.4 16.5 8.4 14.4 12 14.4C15.6 14.4 18.6 16.5 19.4 20.4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  bell: '<path d="M6.2 16.3V11.3C6.2 9.76174 6.81107 8.28649 7.89878 7.19878C8.98649 6.11107 10.4617 5.5 12 5.5C13.5383 5.5 15.0135 6.11107 16.1012 7.19878C17.1889 8.28649 17.8 9.76174 17.8 11.3V16.3L19.5 18.2H4.5L6.2 16.3Z" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M10 21H14" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  calendar: '<path d="M6.2 5.2H17.8C19.2359 5.2 20.4 6.36406 20.4 7.8V17.8C20.4 19.2359 19.2359 20.4 17.8 20.4H6.2C4.76406 20.4 3.6 19.2359 3.6 17.8V7.8C3.6 6.36406 4.76406 5.2 6.2 5.2Z" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M3.8 10H20.2M8.2 3V7.2M15.8 3V7.2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  close: '<path d="M6.3 6.1L12.0004 11.9491M12.0004 11.9491L17.8 17.9M12.0004 11.9491L17.7 6.2M12.0004 11.9491L6.2 17.8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  check: '<path d="M5 12.8L9.4 17.1L19.2 7" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  download: '<path d="M12 3.8V14.8M7.4 10.5L12 15.1L16.6 10.5M4.8 19.8H19.2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  back: '<path d="M19.4 12.1H4.8M10.6 6L4.6 12.1L10.6 18.1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  next: '<path d="M4.6 12H19.2M13.4 6L19.4 12L13.4 18.1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  chevron: '<path d="M6.2 9.2L12 15L17.8 9.2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  clock: '<path d="M20.4 12C20.4 16.6392 16.6392 20.4 12 20.4C7.36081 20.4 3.6 16.6392 3.6 12C3.6 7.36081 7.36081 3.6 12 3.6C16.6392 3.6 20.4 7.36081 20.4 12Z" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M12 7.2V12.2L15.2 14.2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  plus: '<path d="M12 5V12.1M12 12.1V19M12 12.1H5M12 12.1H19" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  help: '<path d="M20.6 12C20.6 16.7496 16.7496 20.6 12 20.6C7.25035 20.6 3.4 16.7496 3.4 12C3.4 7.25035 7.25035 3.4 12 3.4C16.7496 3.4 20.6 7.25035 20.6 12Z" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M9.5 9.4C9.7272 8.852 10.135 8.39817 10.6556 8.11384C11.1763 7.82951 11.7785 7.73179 12.3624 7.83688C12.9462 7.94197 13.4766 8.24357 13.8654 8.6916C14.2542 9.13964 14.4782 9.70717 14.5 10.3C14.5 12.1 12 12.5 12 14.1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M12 17.8C12.3314 17.8 12.6 17.5314 12.6 17.2C12.6 16.8686 12.3314 16.6 12 16.6C11.6686 16.6 11.4 16.8686 11.4 17.2C11.4 17.5314 11.6686 17.8 12 17.8Z" fill="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  video: '<path d="M5.8 6.4H13C14.3255 6.4 15.4 7.47452 15.4 8.8V15.2C15.4 16.5255 14.3255 17.6 13 17.6H5.8C4.47452 17.6 3.4 16.5255 3.4 15.2V8.8C3.4 7.47452 4.47452 6.4 5.8 6.4Z" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M15.6 10.4L20.6 7.4V16.6L15.6 13.6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  message: '<path d="M20.2 15C20.2 15.5304 19.9893 16.0391 19.6142 16.4142C19.2391 16.7893 18.7304 17 18.2 17H8.2L3.8 20.6V6C3.8 5.46957 4.01071 4.96086 4.38579 4.58579C4.76086 4.21071 5.26957 4 5.8 4H18.2C18.7304 4 19.2391 4.21071 19.6142 4.58579C19.9893 4.96086 20.2 5.46957 20.2 6V15Z" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  map: '<path d="M3.6 6.4L9 4.2L15 6.4L20.4 4.2V17.6L15 19.8L9 17.6L3.6 19.8V6.4Z" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M9 4.4V17.4M15 6.6V19.6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  logout: '<path d="M14 4H18.2C18.7304 4 19.2391 4.21071 19.6142 4.58579C19.9893 4.96086 20.2 5.46957 20.2 6V18C20.2 18.5304 19.9893 19.0391 19.6142 19.4142C19.2391 19.7893 18.7304 20 18.2 20H14M9.2 16.2L5 12L9.2 7.8M5.2 12H16.2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>'
 };
 
 function icon(name, size) {
   const s = size || 18;
-  return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[name] + '</svg>';
+  return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" aria-hidden="true">' + ICONS[name] + '</svg>';
+}
+
+/* images from the assets folder */
+
+function asset(path) {
+  return (IN_PAGES ? '../assets/' : 'assets/') + path;
+}
+
+function doodle(name, style) {
+  return '<img class="doodle" src="' + asset('doodles/' + name + '.svg') + '" alt=""' + (style ? ' style="' + style + '"' : '') + '>';
+}
+
+function doodleImg(name, w, h) {
+  return '<img class="doodle-img" src="' + asset('doodles/' + name + '.svg') + '" alt="" width="' + w + '" height="' + h + '">';
+}
+
+function pinHtml(color) {
+  return '<span class="pin' + (color ? ' ' + color : '') + '"></span>';
+}
+
+function tapeHtml(color, style) {
+  return '<span class="tape' + (color ? ' ' + color : '') + '"' + (style ? ' style="' + style + '"' : '') + '></span>';
+}
+
+function linesHtml(kind, inset) {
+  return '<div class="paper-lines' + (kind === 'plain' ? ' plain' : '') + '"' + (inset ? ' style="--pl:' + inset + '"' : '') + '></div>';
 }
 
 /* dates and times */
@@ -141,7 +176,11 @@ function initials(name) {
 
 function stars(n) {
   const full = Math.round(n);
-  return '<span class="stars" aria-label="' + n + ' out of 5">' + '&#9733;'.repeat(full) + '&#9734;'.repeat(5 - full) + '</span>';
+  let out = '<span class="stars" aria-label="' + n + ' out of 5">';
+  for (let i = 0; i < 5; i++) {
+    out += '<img src="' + asset('icons/' + (i < full ? 'star-filled' : 'star-empty') + '.svg') + '" alt="">';
+  }
+  return out + '</span>';
 }
 
 /* user and role */
@@ -216,8 +255,9 @@ function openModal(opts) {
   overlay.className = 'overlay';
   overlay.innerHTML =
     '<div class="modal' + (opts.wide ? ' wide' : '') + '" role="dialog" aria-modal="true" aria-labelledby="modalTitle">' +
+    tapeHtml(opts.tape === undefined ? 'pink' : opts.tape, opts.tapeStyle) +
     '<div class="modal-head"><h2 id="modalTitle">' + esc(opts.title) + '</h2>' +
-    '<button class="icon-btn" type="button" aria-label="Close" data-close>' + icon('close') + '</button></div>' +
+    '<button class="icon-btn" type="button" aria-label="Close" data-close>' + icon('close', 16) + '</button></div>' +
     '<div class="modal-body"></div>' +
     '<div class="modal-foot"></div></div>';
   const body = $('.modal-body', overlay);
@@ -392,7 +432,7 @@ function renderBell() {
   if (!slot) return;
   const n = unreadCount();
   const btn = $('#bellBtn');
-  btn.innerHTML = icon('bell', 20) + (n ? '<span class="badge-count">' + n + '</span>' : '');
+  btn.innerHTML = icon('bell', 18) + (n ? '<span class="badge-count">' + n + '</span>' : '');
   btn.setAttribute('aria-label', n ? 'Notifications, ' + n + ' unread' : 'Notifications');
   if ($('#notifPanel')) renderNotifPanel();
 }
@@ -401,15 +441,16 @@ function renderNotifPanel() {
   const panel = $('#notifPanel');
   const r = role();
   const list = Store.get().notifications.filter(function (n) { return n.forWho === r; }).slice(0, 12);
-  let html = '<div class="head"><span>Notifications</span><button class="link-btn small" type="button" id="markRead">Mark all read</button></div>';
-  if (!list.length) html += '<div class="notif-empty">Nothing new yet. Updates about your sessions and requests show up here.</div>';
+  let html = pinHtml('') + '<div class="notif-scroll"><div class="head"><span>Notifications</span><button class="link-btn small" type="button" id="markRead">Mark all read</button></div>';
+  if (!list.length) html += '<div class="notif-empty"><img src="' + asset('doodles/envelope.svg') + '" alt="">Nothing new yet. Updates about your sessions and requests show up here.</div>';
   list.forEach(function (n) {
     const when = new Date(n.time);
     const tag = n.link ? 'a href="' + esc(n.link) + '"' : 'div';
     const end = n.link ? 'a' : 'div';
-    html += '<' + tag + ' class="notif-item' + (n.read ? '' : ' unread') + '">' + esc(n.text) +
-      '<small>' + when.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + '</small></' + end + '>';
+    html += '<' + tag + ' class="notif-item' + (n.read ? '' : ' unread') + '"><span class="notif-text">' + esc(n.text) +
+      '<small>' + when.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + '</small></span></' + end + '>';
   });
+  html += '</div>';
   panel.innerHTML = html;
   $('#markRead').addEventListener('click', function () {
     Store.update(function (s) {
@@ -417,6 +458,19 @@ function renderNotifPanel() {
     });
     renderBell();
   });
+}
+
+function placeNotifPanel() {
+  const panel = $('#notifPanel');
+  const bell = $('#bellBtn');
+  if (!panel || !bell) return;
+  if (window.innerWidth <= 820) {
+    panel.style.left = '';
+    return;
+  }
+  const host = $('#topbar').getBoundingClientRect();
+  const b = bell.getBoundingClientRect();
+  panel.style.left = (b.right - host.left + 21 - 330) + 'px';
 }
 
 function shell(active) {
@@ -432,12 +486,14 @@ function shell(active) {
   if (r === 'guest') {
     right = '<span class="role-badge">Guest</span><a class="btn btn-primary btn-sm" href="' + href('index.html') + '">Sign in</a>';
   } else {
+    const nm = u.name || 'Profile';
     right = '<span class="role-badge">' + (r === 'tutor' ? 'Tutor' : 'Student') + '</span>' +
       '<span id="bellSlot"><button class="icon-btn" id="bellBtn" type="button" aria-haspopup="true" aria-expanded="false"></button></span>' +
-      '<a class="btn btn-sm" href="' + href('profile.html') + '">' + icon('user', 16) + ' ' + esc(u.name || 'Profile') + '</a>' +
-      '<button class="btn btn-sm" type="button" id="signOut">Sign out</button>';
+      '<a class="account" href="' + href('profile.html') + '" aria-label="Profile"><span class="avatar' + (r === 'tutor' ? '' : ' mint') + '">' + esc(initials(nm)) + '</span>' +
+      '<span class="account-name">' + esc(nm) + '</span></a>' +
+      '<button class="link-btn" type="button" id="signOut">Sign out</button>';
   }
-  slot.innerHTML = '<header class="topbar"><a class="brand" href="' + home + '">University Tutor</a><nav aria-label="Main">' + nav + '</nav><div class="topbar-right">' + right + '</div></header>';
+  slot.innerHTML = '<header class="topbar"><a class="brand" href="' + home + '"><img src="' + asset('doodles/lamp.svg') + '" alt="">University Tutor</a><nav aria-label="Main">' + nav + '</nav><span class="topbar-spacer"></span><div class="topbar-right">' + right + '</div></header>';
 
   if (r !== 'guest') {
     renderBell();
@@ -451,8 +507,9 @@ function shell(active) {
       const panel = document.createElement('div');
       panel.id = 'notifPanel';
       panel.className = 'notif-panel';
-      $('#bellSlot').appendChild(panel);
+      slot.appendChild(panel);
       renderNotifPanel();
+      placeNotifPanel();
       this.setAttribute('aria-expanded', 'true');
     });
     $('#signOut').addEventListener('click', function () {
@@ -463,11 +520,13 @@ function shell(active) {
 }
 
 /* a page that needs an account shows this instead of its content */
-function requireLogin(message) {
+function requireLogin(message, title, art) {
   if (role() !== 'guest') return true;
   $('#main').innerHTML =
-    '<div class="card empty"><h2>Sign in first</h2><p>' + esc(message || 'You need an account to use this page.') + '</p>' +
-    '<a class="btn btn-primary" href="' + href('index.html') + '">Sign in or create an account</a></div>';
+    '<div class="page-head"><h1>' + esc(title || '') + '</h1></div>' +
+    '<div class="sheet gate">' + linesHtml('plain', '-10px 0 -30px 0') + doodleImg(art || 'ticket', 70, art === 'star' ? 70 : 66.5) +
+    '<h2>Sign in first</h2><p>' + esc(message || 'You need an account to use this page.') + '</p>' +
+    '<a class="btn btn-primary" href="' + href('index.html') + '">Sign in or create an account</a>' + pinHtml('') + '</div>';
   return false;
 }
 

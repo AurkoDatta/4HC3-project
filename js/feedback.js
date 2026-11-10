@@ -3,7 +3,7 @@ startPage('events');
 const reqId = qs().id;
 
 function render() {
-  if (!requireLogin('Sign in to leave feedback.')) return;
+  if (!requireLogin('Sign in to leave feedback.', 'Feedback', 'star')) return;
   const r = Store.get().requests.filter(function (x) { return x.id === reqId; })[0];
   const main = document.getElementById('main');
   if (!r || r.studentKey !== 'me') {

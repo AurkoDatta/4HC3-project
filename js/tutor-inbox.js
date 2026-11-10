@@ -51,7 +51,7 @@ function card(r) {
 
 function render() {
   if (role() === 'guest') {
-    requireLogin('Sign in as a tutor to see student requests.');
+    requireLogin('Sign in as a tutor to see student requests.', 'Request inbox', 'envelope');
     return;
   }
   if (role() !== 'tutor') {

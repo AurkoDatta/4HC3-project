@@ -45,7 +45,7 @@ function requestCard(r) {
 }
 
 function render() {
-  if (!requireLogin('Sign in to see the sessions you registered for.')) return;
+  if (!requireLogin('Sign in to see the sessions you registered for.', 'My events', 'ticket')) return;
   const s = Store.get();
   const regs = myRegistrations().sort(function (a, b) {
     const x = sessionById(a.sessionId);
