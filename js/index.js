@@ -9,13 +9,30 @@ function schoolOptions() {
   }).join('');
 }
 
+function entryDoodles() {
+  return '<img class="e-books" src="' + asset('doodles/books.svg') + '" alt="">' +
+    '<img class="e-plant" src="' + asset('doodles/plant.svg') + '" alt="">' +
+    '<span class="e-pencil"><img src="' + asset('doodles/pencil.svg') + '" alt=""></span>';
+}
+
+function entryHead() {
+  return '<div class="e-head"><div class="e-brand">' + doodleImg('lamp', 56, 53.2) +
+    '<h1>University Tutor</h1></div>' +
+    '<p>Find a help centre session or a tutor for your course.</p></div>';
+}
+
 function showAlready(user) {
   const where = user.role === 'tutor' ? href('tutor-inbox.html') : href('home.html');
+  main.className = 'container p-entry';
   main.innerHTML =
-    '<div class="auth-wrap card"><h1>Welcome back</h1>' +
+    '<div class="e-content">' + entryHead() +
+    '<div class="sheet e-welcome">' + linesHtml('margin', '0 0 -40px 0') +
+    '<h2>Welcome back</h2>' +
     '<p>You are signed in as <b>' + esc(user.name) + '</b> (' + user.role + ').</p>' +
     '<div class="row-flex"><a class="btn btn-primary" href="' + where + '">Continue</a>' +
-    '<button class="btn" type="button" id="out">Sign out</button></div></div>';
+    '<button class="btn" type="button" id="out">Sign out</button></div>' +
+    pinHtml('') + doodle('mug', 'bottom:-14px;right:-14px;width:70px;height:66.5px') + '</div></div>' +
+    entryDoodles();
   document.getElementById('out').addEventListener('click', function () {
     Store.update(function (s) { s.user = null; });
     render();
@@ -28,15 +45,15 @@ function render() {
     showAlready(user);
     return;
   }
+  main.className = 'container p-entry';
   const isNew = mode === 'register';
   main.innerHTML =
-    '<div class="auth-wrap">' +
-    '<div class="page-head" style="text-align:center"><h1>University Tutor</h1>' +
-    '<p>Find a help centre session or a tutor for your course.</p></div>' +
-    '<div class="card">' +
-    '<div class="tabs" role="tablist">' +
+    '<div class="e-content">' + entryHead() +
+    '<div class="e-card">' +
+    '<div class="e-tabs" role="tablist">' +
     '<button type="button" role="tab" data-mode="signin" aria-selected="' + !isNew + '">Sign in</button>' +
     '<button type="button" role="tab" data-mode="register" aria-selected="' + isNew + '">Create account</button></div>' +
+    '<div class="e-sheet">' +
     '<form id="authForm" novalidate>' +
     (isNew ? '<div class="field"><label for="name">Full name <span class="req">*</span></label><input type="text" id="name" autocomplete="name"></div>' : '') +
     '<div class="field"><label for="email">Email <span class="req">*</span></label><input type="email" id="email" autocomplete="email"></div>' +
@@ -50,14 +67,14 @@ function render() {
     '<div class="field" id="idField" hidden><label for="studentId">Student ID <span class="req">*</span> ' +
     helpDot('Tutors have to give a student ID so we can check they are enrolled before they can help anyone.') + '</label>' +
     '<input type="text" id="studentId" inputmode="numeric" placeholder="9 digits"></div>' +
-    '<button class="btn btn-primary" type="submit" style="width:100%;justify-content:center">' + (isNew ? 'Create account' : 'Sign in') + '</button>' +
+    '<button class="btn btn-primary e-submit" type="submit">' + (isNew ? 'Create account' : 'Sign in') + '</button>' +
     '</form>' +
-    '<hr style="border:0;border-top:1px solid var(--line);margin:1.1rem 0">' +
-    '<p class="small muted">Just looking around? You can browse help centre sessions without an account, you only need to sign in to register.</p>' +
-    '<div class="row-flex"><a class="btn" href="' + href('help-centre.html') + '">Visit as a guest</a>' +
-    '<button class="btn" type="button" id="demoStudent">Use demo student</button>' +
-    '<button class="btn" type="button" id="demoTutor">Use demo tutor</button></div>' +
-    '</div></div>';
+    '<div class="e-dash"></div>' +
+    '<p class="e-note">Just looking around? You can browse help centre sessions without an account, you only need to sign in to register.</p>' +
+    '<div class="e-row"><a class="btn btn-sm" href="' + href('help-centre.html') + '">Visit as a guest</a>' +
+    '<button class="btn btn-sm" type="button" id="demoStudent">Use demo student</button>' +
+    '<button class="btn btn-sm" type="button" id="demoTutor">Use demo tutor</button></div>' +
+    '</div></div></div>' + entryDoodles();
 
   document.querySelectorAll('[data-mode]').forEach(function (b) {
     b.addEventListener('click', function () {
