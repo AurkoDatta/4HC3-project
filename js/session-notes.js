@@ -20,11 +20,19 @@ function notesFor(r) {
   };
 }
 
+function placeText(b) {
+  const m = /^Online \((.*)\)$/.exec(b.place);
+  if (m) return 'Online, ' + m[1];
+  return b.mode === 'online' ? b.place : 'In person, ' + b.place;
+}
+
 function render() {
   if (!requireLogin('Sign in to see your session notes.', 'Session notes', 'pencil')) return;
   const r = findRequest();
   if (!r || !r.booking || r.studentKey !== 'me') {
-    document.getElementById('main').innerHTML = '<div class="card empty"><h2>Session not found</h2><a class="btn" href="' + href('my-events.html') + '">Back to My events</a></div>';
+    document.getElementById('main').innerHTML =
+      '<nav class="crumbs" aria-label="Breadcrumb"><span class="crumb current">My events</span></nav>' +
+      '<div class="sheet mat-empty">' + doodleImg('compass', 70, 66.5) + '<h2>Session not found</h2><a class="btn btn-primary" href="' + href('my-events.html') + '">Back to My events</a>' + pinHtml('') + '</div>';
     return;
   }
   const t = tutorById(r.tutorId);
@@ -34,28 +42,33 @@ function render() {
   const fb = Store.get().feedback.filter(function (f) { return f.requestId === r.id; })[0];
 
   document.getElementById('main').innerHTML =
-    '<nav class="crumbs" aria-label="Breadcrumb"><a class="crumb" href="' + href('my-events.html') + '">My events</a><span class="sep">&gt;</span><span class="crumb current">' + esc(r.course) + ' with ' + esc(t.name) + '</span></nav>' +
+    '<nav class="crumbs" aria-label="Breadcrumb"><a class="crumb" href="' + href('my-events.html') + '">My events</a><span class="sep">&rsaquo;</span><span class="crumb current">' + esc(r.course) + ' with ' + esc(t.name) + '</span></nav>' +
     '<div class="page-head"><h1>' + esc(r.course) + ' with ' + esc(t.name) + '</h1><p>' + fmtDateLong(b.date) + ', ' + fmtRange(b.start, b.end) + '</p></div>' +
-    '<div class="card"><div class="row-flex spread"><div><span class="tag ' + (done ? 'grey' : 'good') + '">' + (done ? 'Completed' : 'Booked') + '</span> ' +
-    '<span class="tag grey">' + (b.mode === 'online' ? 'Online' : 'In person') + '</span><p style="margin:.6rem 0 0">' + esc(b.place) + '</p></div>' +
-    (done ? '' : '<div class="row-flex"><button class="btn btn-primary" type="button" id="join">' + (b.mode === 'online' ? 'Join session' : 'I am here') + '</button></div>') + '</div></div>' +
+    '<div class="sheet sn-status"><div class="sn-status-row"><div class="sn-status-info"><span class="avatar">' + esc(initials(t.name)) + '</span>' +
+    '<span class="tag ' + (done ? 'grey' : 'good') + '">' + (done ? 'Completed' : 'Booked') + '</span> ' +
+    '<span class="tag grey">' + (b.mode === 'online' ? 'Online' : 'In person') + '</span><span class="sn-place">' + esc(placeText(b)) + '</span></div>' +
+    (done ? '' : '<button class="btn btn-primary" type="button" id="join">' + icon(b.mode === 'online' ? 'video' : 'check', 16) + (b.mode === 'online' ? 'Join session' : 'I am here') + '</button>') + '</div>' + pinHtml('sky') + '</div>' +
     (done
-      ? '<div class="card"><h2>Session notes</h2>' +
+      ? '<div class="sheet sn-sheet sn-done">' + linesHtml('margin', '2px 0 -42px 0') + tapeHtml('sky', 'left:58px;top:-9px') +
+        '<h2>Session notes</h2>' +
         '<h3>Summary</h3><p>' + esc(n.summary) + '</p>' +
         '<h3>Key concepts</h3><ul>' + n.concepts.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul>' +
         '<h3>Examples worked on</h3><ul>' + n.examples.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul>' +
-        '<div class="row-flex"><button class="btn" type="button" id="dl">' + icon('download', 14) + ' Download notes</button>' +
-        (fb ? '<span class="tag good">Feedback sent</span>' : '<a class="btn btn-primary" href="' + href('feedback.html', { id: r.id }) + '">Leave feedback</a>') + '</div></div>'
-      : '<div class="card"><h2>Before the session</h2><p>Your question: <i>' + esc(r.question) + '</i></p>' +
-        '<p class="muted">Notes show up here after the session ends.</p></div>');
+        '<div class="sn-actions"><button class="btn" type="button" id="dl">' + icon('download', 16) + ' Download notes</button>' +
+        (fb ? '<span class="tag good">Feedback sent</span>' : '<a class="btn btn-primary" href="' + href('feedback.html', { id: r.id }) + '">Leave feedback</a>') + '</div>' +
+        doodle('bulb', 'right:-16px;bottom:-16px;width:80px;height:76px') + '</div>'
+      : '<div class="sheet sn-sheet sn-before">' + linesHtml('margin', '0 0 -40px 0') + tapeHtml('peach', 'left:58px;top:-9px') +
+        '<h2>Before the session</h2><p class="sn-q">Your question: <i>' + esc(r.question) + '</i></p>' +
+        '<p class="sn-note">Notes show up here after the session ends.</p>' +
+        doodle('coffee-ring', 'right:-22px;top:-31px;width:90px;height:85.5px') + '</div>');
 
   const j = document.getElementById('join');
   if (j) j.addEventListener('click', function () {
     openModal({
       title: b.mode === 'online' ? 'In session' : 'Checked in',
-      html: '<p>' + (b.mode === 'online' ? 'Pretend the video call is open.' : 'You are marked as present.') + ' When you have finished, end the session to get your notes.</p>',
+      html: '<div class="mat-modal-row">' + doodleImg(b.mode === 'online' ? 'lamp' : 'mug', 54, 51.3) + '<p>' + (b.mode === 'online' ? 'Pretend the video call is open.' : 'You are marked as present.') + ' When you have finished, end the session to get your notes.</p></div>',
       actions: [
-        { label: 'Stay in session' },
+        { label: 'Stay in session', kind: 'ghost' },
         {
           label: 'End session', kind: 'primary', onClick: function () {
             Store.update(function (s) {
