@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="80" height="76" viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Doodle/bulb" clip-path="url(#clip0_0_8)">
+<path id="Vector" d="M40 10C28 10 20 19 20 30C20 38 25 42 28 46C30 49 30 52 30 54H50C50 52 50 49 52 46C55 42 60 38 60 30C60 19 52 10 40 10Z" fill="#FFE27A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke="#22306B"/>
+<path id="Vector_2" d="M31 60H49M33 66H47" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke="#22306B"/>
+<path id="Vector_3" d="M12 22L6 19M68 22L74 19M40 4V0" stroke-width="2.2" stroke-linecap="round" stroke="#E0473D"/>
+</g>
+<defs>
+<clipPath id="clip0_0_8">
+<rect width="80" height="76" fill="white"/>
+</clipPath>
+</defs>
+</svg>

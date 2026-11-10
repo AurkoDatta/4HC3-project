@@ -1,0 +1,19 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Pin">
+<g id="Ellipse" filter="url(#filter0_d_0_7)">
+<circle cx="12" cy="10" r="10" fill="#22306B"/>
+</g>
+<ellipse id="Ellipse_2" cx="9.75" cy="6.1" rx="3.25" ry="2.5" fill="white" fill-opacity="0.7"/>
+</g>
+<defs>
+<filter id="filter0_d_0_7" x="0" y="0" width="28" height="28" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="2" dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.2 0 0 0 0 0.1 0 0 0 0 0 0 0 0 0.35 0"/>
+<feBlend mode="multiply" in2="BackgroundImageFix" result="effect1_dropShadow_0_7"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_7" result="shape"/>
+</filter>
+</defs>
+</svg>

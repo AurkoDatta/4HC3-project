@@ -1,0 +1,14 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="80" height="76" viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Doodle/books" clip-path="url(#clip0_0_10)">
+<path id="Vector" d="M10 56H72V70H10V56Z" fill="#FFC2D1"/>
+<path id="Vector_2" d="M14 44H70V56H14V44Z" fill="#C6DEFF"/>
+<path id="Vector_3" d="M10 32H70L72 44H8L10 32Z" fill="#FFE27A"/>
+<path id="Vector_4" d="M6 70H10M10 70H72M10 70V56H14M72 70H82M72 70V56H70M14 56H70M14 56V44M70 56V44M14 44H70M14 44H8L10 32H70L72 44H70" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke="#22306B"/>
+<path id="Vector_5" d="M60 32C60 24 64 18 70 16M66 18L71 15L72 21" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="#22306B"/>
+</g>
+<defs>
+<clipPath id="clip0_0_10">
+<rect width="80" height="76" fill="white"/>
+</clipPath>
+</defs>
+</svg>
