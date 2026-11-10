@@ -34,50 +34,73 @@ function listTutors() {
   return list;
 }
 
-function tutorCard(t) {
+const TONES = ['', 'pink', 'mint', 'peach', 'yellow'];
+const PINS = ['', 'yellow', 'sky', 'mint'];
+
+function tone(t) {
+  const i = TUTORS.indexOf(t);
+  return TONES[(i < 0 ? 0 : i) % TONES.length];
+}
+
+function modeList(t) {
+  const txt = t.modes.join(', ');
+  return txt.charAt(0).toUpperCase() + txt.slice(1);
+}
+
+function tutorCard(t, n) {
   const slots = freeSlots(t).slice(0, 3);
   const picked = compare.indexOf(t.id) !== -1;
   const full = compare.length >= 3 && !picked;
-  return '<div class="card tutor-card"><div class="avatar" aria-hidden="true">' + initials(t.name) + '</div>' +
-    '<div><h3 style="margin:0">' + esc(t.name) + '</h3>' +
-    '<div>' + stars(t.rating) + ' <span class="small muted">' + t.rating.toFixed(1) + ' (' + t.sessions + ' sessions)</span></div>' +
-    '<p class="small" style="margin:.4rem 0">' + esc(t.bio) + '</p>' +
-    '<div class="row-flex" style="margin-bottom:.4rem">' +
+  return '<div class="card tutor-card">' + pinHtml(PINS[n % PINS.length]) +
+    '<div class="tc-row"><div class="avatar sz-56 ' + tone(t) + '" aria-hidden="true">' + initials(t.name) + '</div>' +
+    '<div class="tc-col"><h3>' + esc(t.name) + '</h3>' +
+    '<div class="tc-rate">' + stars(t.rating) + '<span>' + t.rating.toFixed(1) + ' (' + t.sessions + ' sessions)</span></div>' +
+    '<p class="tc-bio">' + esc(t.bio) + '</p>' +
+    '<div class="tc-tags">' +
     (t.type === 'paid' ? '<span class="tag info">$' + t.rate + ' per hour</span>' : '<span class="tag good">Volunteer, free</span>') +
     t.modes.map(function (m) { return '<span class="tag grey">' + (m === 'online' ? 'Online' : 'In person') + '</span>'; }).join('') + '</div>' +
-    '<div class="small muted">Next free: ' + (slots.length ? slots.map(function (x) { return fmtDate(x.date) + ' ' + fmtTime(x.start); }).join(', ') : 'nothing in the next two weeks') + '</div></div>' +
-    '<div class="stack" style="text-align:right">' +
+    '<div class="tc-next">Next free: ' + (slots.length ? slots.map(function (x) { return fmtDate(x.date) + ' ' + fmtTime(x.start); }).join(', ') : 'nothing in the next two weeks') + '</div></div>' +
+    '<div class="tc-side">' +
     '<button class="btn btn-primary" type="button" data-request="' + t.id + '">Request session</button>' +
-    '<label class="check-row" style="justify-content:flex-end"><input type="checkbox" data-compare="' + t.id + '"' + (picked ? ' checked' : '') + (full ? ' disabled' : '') + '> Compare</label></div></div>';
+    '<label class="check-row"><input type="checkbox" data-compare="' + t.id + '"' + (picked ? ' checked' : '') + (full ? ' disabled' : '') + '> Compare</label></div></div></div>';
+}
+
+function emptyCard(text, extra) {
+  return '<div class="card empty-card">' + pinHtml('') + doodleImg('compass', 68, 64) + '<p>' + text + '</p>' + (extra || '') + '</div>';
 }
 
 function render() {
+  const main = document.getElementById('main');
+  main.classList.add('p-tutors');
   if (!course) {
-    document.getElementById('main').innerHTML = '<div class="card empty"><h2>Pick a course first</h2><a class="btn btn-primary" href="' + href('find-help.html') + '">Find help</a></div>';
+    main.classList.remove('has-tray');
+    main.innerHTML = '<div class="page-head"><h1>Tutors</h1></div>' +
+      '<div class="card empty-card pick">' + pinHtml('') + doodleImg('compass', 68, 64) + '<h2>Pick a course first</h2><a class="btn btn-primary" href="' + href('find-help.html') + '">Find help</a></div>';
     return;
   }
   const list = listTutors();
   const sessions = SESSIONS.filter(function (s) { return s.course === code && s.date >= TODAY; });
   const qa = PAST_QA.filter(function (q) { return q.course === code; });
   const typeNote = params.type ? ' Help type: ' + params.type + '.' : '';
+  main.classList.toggle('has-tray', compare.length > 0);
 
   const tray = compare.length
-    ? '<div class="compare-tray"><b>Compare (' + compare.length + '/3):</b> ' + compare.map(function (id) { return '<span class="chip">' + esc(tutorById(id).name) + '<button type="button" data-drop="' + id + '" aria-label="Remove ' + esc(tutorById(id).name) + '">' + icon('close', 12) + '</button></span>'; }).join('') +
+    ? '<div class="compare-tray">' + tapeHtml('pink', 'left:calc(50% - 59.5px);top:-12px;width:110px;transform:rotate(-3deg)') + '<b class="tray-title">Compare (' + compare.length + '/3):</b><div class="tray-chips">' + compare.map(function (id) { return '<span class="chip">' + esc(tutorById(id).name) + '<button type="button" data-drop="' + id + '" aria-label="Remove ' + esc(tutorById(id).name) + '">' + icon('close', 12) + '</button></span>'; }).join('') + '</div>' +
       '<button class="btn btn-primary btn-sm" type="button" id="doCompare"' + (compare.length < 2 ? ' disabled' : '') + '>Compare side by side</button>' +
       (compare.length < 2 ? '<span class="small muted">Pick at least two.</span>' : '') + '</div>'
     : '';
 
-  document.getElementById('main').innerHTML =
-    '<nav class="crumbs" aria-label="Breadcrumb"><a class="crumb" href="' + href('find-help.html') + '">Find help</a><span class="sep">&gt;</span><span class="crumb current">' + esc(code) + '</span></nav>' +
+  main.innerHTML =
+    '<nav class="crumbs" aria-label="Breadcrumb"><a class="crumb" href="' + href('find-help.html') + '">Find help</a><span class="sep">&rsaquo;</span><span class="crumb current">' + esc(code) + '</span></nav>' +
     '<div class="page-head"><h1>Tutors for ' + esc(code) + '</h1><p>' + esc(course.title) + ' at ' + esc(SCHOOLS[course.school].short) + '.' + esc(typeNote) + '</p></div>' +
-    '<div class="notice info"><b>Before you book:</b> ' +
+    '<div class="notice info">' + icon('help', 20) + '<div><b>Before you book:</b> ' +
     (qa.length ? 'there ' + (qa.length === 1 ? 'is 1 answered question' : 'are ' + qa.length + ' answered questions') + ' for this course in <a href="' + href('past-material.html', { course: code }) + '">past Q&amp;A</a>. ' : 'check <a href="' + href('past-material.html', { course: code }) + '">past Q&amp;A</a> in case your question was answered. ') +
-    (sessions.length ? 'There are also ' + sessions.length + ' free <a href="' + href('course.html', { course: code }) + '">help centre sessions</a>, the next one is ' + fmtDate(sessions[0].date) + '.' : '') + '</div>' +
-    '<div class="card"><div class="grid cols-3">' +
-    '<div class="field" style="margin:0"><label for="fMode">Format</label><select id="fMode"><option value="">Any</option><option value="online">Online</option><option value="in person">In person</option></select></div>' +
-    '<div class="field" style="margin:0"><label for="fCost">Cost</label><select id="fCost"><option value="">Paid or volunteer</option><option value="paid">Paid</option><option value="volunteer">Volunteer</option></select></div>' +
-    '<div class="field" style="margin:0"><label for="fSort">Sort by</label><select id="fSort"><option value="rating">Best rated</option><option value="soon">Available soonest</option></select></div></div></div>' +
-    (list.length ? list.map(tutorCard).join('') : '<div class="card empty"><p>No tutors match' + (TUTORS.some(function (t) { return t.courses.indexOf(code) !== -1; }) ? ' those filters. Try changing the format or cost.' : ' this course yet.') + '</p><a class="btn" href="' + href('course.html', { course: code }) + '">See help centre sessions</a></div>') +
+    (sessions.length ? 'There are also ' + sessions.length + ' free <a href="' + href('course.html', { course: code }) + '">help centre sessions</a>, the next one is ' + fmtDate(sessions[0].date) + '.' : '') + '</div></div>' +
+    '<div class="card filters">' + tapeHtml('peach', 'left:auto;right:57px;top:-9.7px') + '<div class="filter-row">' +
+    '<div class="field"><label for="fMode">Format</label><select id="fMode"><option value="">Any</option><option value="online">Online</option><option value="in person">In person</option></select></div>' +
+    '<div class="field"><label for="fCost">Cost</label><select id="fCost"><option value="">Paid or volunteer</option><option value="paid">Paid</option><option value="volunteer">Volunteer</option></select></div>' +
+    '<div class="field"><label for="fSort">Sort by</label><select id="fSort"><option value="rating">Best rated</option><option value="soon">Available soonest</option></select></div></div></div>' +
+    (list.length ? list.map(tutorCard).join('') : emptyCard('No tutors match' + (TUTORS.some(function (t) { return t.courses.indexOf(code) !== -1; }) ? ' those filters. Try changing the format or cost.' : ' this course yet.'), TUTORS.some(function (t) { return t.courses.indexOf(code) !== -1; }) ? '<a class="btn" href="' + href('course.html', { course: code }) + '">See help centre sessions</a>' : '')) +
     tray;
 
   document.getElementById('fMode').value = filters.mode;
@@ -116,20 +139,20 @@ function wire() {
 
 function showCompare() {
   const rows = [
-    ['Rating', function (t) { return stars(t.rating) + ' ' + t.rating.toFixed(1); }],
+    ['Rating', function (t) { return stars(t.rating) + '<div class="cmp-sub">' + t.rating.toFixed(1) + ' (' + t.sessions + ')</div>'; }],
     ['Sessions taught', function (t) { return t.sessions; }],
-    ['Cost', function (t) { return t.type === 'paid' ? '$' + t.rate + ' per hour' : 'Free (volunteer)'; }],
-    ['Format', function (t) { return t.modes.join(', '); }],
+    ['Cost', function (t) { return t.type === 'paid' ? '<span class="tag info">$' + t.rate + ' per hour</span>' : '<span class="tag good">Volunteer, free</span>'; }],
+    ['Format', function (t) { return modeList(t); }],
     ['Next free', function (t) { const s = freeSlots(t)[0]; return s ? fmtDate(s.date) + ' ' + fmtTime(s.start) : 'None soon'; }],
     ['Free slots (2 weeks)', function (t) { return freeSlots(t).length; }],
     ['About', function (t) { return esc(t.bio); }]
   ];
   const picks = compare.map(tutorById);
-  let html = '<table class="compare-table"><tr><th></th>' + picks.map(function (t) { return '<th>' + esc(t.name) + '</th>'; }).join('') + '</tr>';
+  let html = '<div class="cmp"><table class="compare-table"><tr><th></th>' + picks.map(function (t) { return '<th><span class="cmp-who"><span class="avatar ' + tone(t) + '">' + initials(t.name) + '</span><span>' + esc(t.name) + '</span></span></th>'; }).join('') + '</tr>';
   rows.forEach(function (r) {
     html += '<tr><th>' + r[0] + '</th>' + picks.map(function (t) { return '<td>' + r[1](t) + '</td>'; }).join('') + '</tr>';
   });
-  html += '<tr><th></th>' + picks.map(function (t) { return '<td><button class="btn btn-primary btn-sm" type="button" data-pick="' + t.id + '">Request ' + esc(t.name.split(' ')[0]) + '</button></td>'; }).join('') + '</tr></table>';
+  html += '<tr><th></th>' + picks.map(function (t) { return '<td><button class="btn btn-primary btn-sm" type="button" data-pick="' + t.id + '">Request ' + esc(t.name.split(' ')[0]) + '</button></td>'; }).join('') + '</tr></table></div>';
   const m = openModal({ title: 'Compare tutors', html: html, wide: true, actions: [{ label: 'Close' }] });
   $$('[data-pick]', m.el).forEach(function (b) {
     b.addEventListener('click', function () {
@@ -144,7 +167,7 @@ function openRequest(t) {
     openModal({
       title: 'Sign in to send a request',
       html: '<p>You can look at tutors as a guest, but you need an account to talk to them.</p>',
-      actions: [{ label: 'Not now' }, { label: 'Sign in', kind: 'primary', onClick: function () { location.href = href('index.html'); return false; } }]
+      actions: [{ label: 'Not now', kind: 'ghost' }, { label: 'Sign in', kind: 'primary', onClick: function () { location.href = href('index.html'); return false; } }]
     });
     return;
   }
@@ -152,29 +175,29 @@ function openRequest(t) {
   const chosen = [];
   const starter = params.rebook ? 'Follow up from our last session: ' : '';
   let html =
-    '<p>Request to <b>' + esc(t.name) + '</b> for <b>' + esc(code) + '</b>.</p>' +
+    '<div class="rq"><p class="rq-intro">Request to <b>' + esc(t.name) + '</b> for <b>' + esc(code) + '</b>.</p>' +
     '<div class="field" id="qField"><label for="question">What do you need help with? <span class="req">*</span></label><textarea id="question" placeholder="Describe the question or the part you are stuck on">' + esc(starter) + '</textarea><div class="hint">A few sentences helps the tutor decide if they can help.</div></div>' +
-    '<div class="field"><label for="urgency">How soon do you need it?</label><select id="urgency"><option value="low">No rush</option><option value="medium" selected>This week</option><option value="urgent">Urgent, within a day or two</option></select></div>' +
-    '<div class="field"><label for="mode">Format</label><select id="mode">' + t.modes.map(function (m) { return '<option value="' + m + '">' + (m === 'online' ? 'Online' : 'In person') + '</option>'; }).join('') + '</select></div>' +
+    '<div class="rq-two"><div class="field"><label for="urgency">How soon do you need it?</label><select id="urgency"><option value="low">No rush</option><option value="medium" selected>This week</option><option value="urgent">Urgent, within a day or two</option></select></div>' +
+    '<div class="field"><label for="mode">Format</label><select id="mode">' + t.modes.map(function (m) { return '<option value="' + m + '">' + (m === 'online' ? 'Online' : 'In person') + '</option>'; }).join('') + '</select></div></div>' +
     '<div class="field" id="slotField"><label>Preferred times (pick up to 3) <span class="req">*</span></label>';
   if (!slots.length) html += '<p class="muted">This tutor has no free times in the next two weeks.</p>';
   let lastDay = '';
   slots.forEach(function (x, i) {
     if (x.date !== lastDay) {
-      if (lastDay) html += '</div>';
-      html += '<div class="day-label">' + fmtDate(x.date) + '</div><div class="slot-grid">';
+      if (lastDay) html += '</div></div>';
+      html += '<div class="day-group"><div class="day-label">' + fmtDate(x.date) + '</div><div class="slot-grid">';
       lastDay = x.date;
     }
     html += '<button class="slot" type="button" aria-pressed="false" data-slot="' + i + '">' + fmtRange(x.start, x.end) + '</button>';
   });
-  if (lastDay) html += '</div>';
-  html += '</div>';
+  if (lastDay) html += '</div></div>';
+  html += '</div></div>';
 
   const m = openModal({
     title: 'Request a session',
     html: html,
     actions: [
-      { label: 'Cancel' },
+      { label: 'Cancel', kind: 'ghost' },
       {
         label: 'Send request', kind: 'primary', onClick: function (close, ov) {
           const q = ov.querySelector('#question').value.trim();
