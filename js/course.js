@@ -54,18 +54,23 @@ function refresh() {
 
   document.getElementById('chips').innerHTML = chips.map(function (c, i) {
     return '<span class="chip">' + esc(c.label) + '<button type="button" data-chip="' + i + '" aria-label="Remove filter ' + esc(c.label) + '">' + icon('close', 12) + '</button></span>';
-  }).join('') + (chips.length ? '<button class="link-btn small" type="button" id="clearAll">Clear all</button>' : '');
+  }).join('') + (chips.length ? '<button class="link-btn clear-pill" type="button" id="clearAll">Clear all</button>' : '');
 
   document.getElementById('count').textContent = 'Showing ' + list.length + ' of ' + all.length + ' upcoming sessions';
   document.getElementById('filterBtn').innerHTML = icon('filter', 16) + ' Filter' + (chips.length ? ' (' + chips.length + ')' : '');
+  document.getElementById('toolbar').hidden = !all.length;
+  document.getElementById('chips').hidden = !all.length || !chips.length;
 
   const box = document.getElementById('list');
   if (!all.length) {
-    box.innerHTML = '<div class="card empty"><p>No upcoming help centre sessions for ' + esc(code) + ' yet.</p><a class="btn" href="' + href('find-help.html', { course: code }) + '">Ask a tutor instead</a></div>';
+    document.getElementById('panel').hidden = true;
+    box.innerHTML = '<div class="empty-sheet">' + pinHtml() + doodleImg('cal', 66, 63) +
+      '<p>No upcoming help centre sessions for ' + esc(code) + ' yet.</p><a class="btn btn-primary" href="' + href('find-help.html', { course: code }) + '">Ask a tutor instead</a></div>';
   } else if (!list.length) {
-    box.innerHTML = '<div class="card empty"><p><b>No sessions match.</b></p><p>Try removing: ' + chips.map(function (c) { return esc(c.label); }).join(', ') + '.</p><button class="btn" type="button" id="clearAll2">Clear all filters</button></div>';
+    box.innerHTML = '<div class="empty-sheet">' + pinHtml() + doodleImg('compass', 66, 63) +
+      '<p class="strong">No sessions match.</p><p>Try removing: ' + chips.map(function (c) { return esc(c.label); }).join(', ') + '.</p><button class="btn btn-primary" type="button" id="clearAll2">Clear all filters</button></div>';
   } else {
-    box.innerHTML = list.map(sessionRowHtml).join('');
+    box.innerHTML = '<div class="s-list">' + pinHtml() + list.map(sessionRowHtml).join('') + '</div>';
   }
 
   $$('[data-chip]').forEach(function (b) {
@@ -93,7 +98,9 @@ function clearAll() {
 
 function build() {
   if (!course) {
-    document.getElementById('main').innerHTML = '<div class="card empty"><h2>Course not found</h2><a class="btn" href="' + href('help-centre.html') + '">Back to help centre</a></div>';
+    document.getElementById('main').innerHTML =
+      '<nav class="crumbs" aria-label="Breadcrumb"><a class="crumb current" href="' + href('help-centre.html') + '">Help centre</a></nav>' +
+      '<div class="empty-sheet">' + pinHtml() + doodleImg('compass', 66, 63) + '<h2>Course not found</h2><a class="btn btn-primary" href="' + href('help-centre.html') + '">Back to help centre</a></div>';
     return;
   }
   if (Store.get().school !== course.school) {
@@ -109,16 +116,16 @@ function build() {
 
   document.getElementById('main').innerHTML =
     '<nav class="crumbs" aria-label="Breadcrumb">' +
-    '<a class="crumb" href="' + href('help-centre.html') + '">Help centre</a><span class="sep">&gt;</span>' +
-    '<a class="crumb" href="' + href('help-centre.html', { subject: subject.id }) + '">' + esc(subject.label) + '</a><span class="sep">&gt;</span>' +
+    '<a class="crumb" href="' + href('help-centre.html') + '">Help centre</a><span class="sep">&rsaquo;</span>' +
+    '<a class="crumb" href="' + href('help-centre.html', { subject: subject.id }) + '">' + esc(subject.label) + '</a><span class="sep">&rsaquo;</span>' +
     '<span class="crumb current">' + esc(course.code) + '</span></nav>' +
     '<div class="page-head"><h1>' + esc(course.code) + ': ' + esc(course.title) + '</h1>' +
-    '<p>At ' + esc(SCHOOLS[course.school].name) + '. Topics: ' + esc(course.topics.join(', ')) + '.</p></div>' +
-    '<div class="row-flex spread" style="margin-bottom:.6rem"><div class="row-flex">' +
+    '<p>At ' + esc(SCHOOLS[course.school].name) + (allSessions().length ? '. Topics: ' + esc(course.topics.join(', ')) + '.' : '.') + '</p></div>' +
+    '<div class="toolbar" id="toolbar"><div class="row-flex">' +
     '<button class="btn" type="button" id="filterBtn" aria-expanded="false" aria-controls="panel"></button>' +
-    '<span class="muted small" id="count" aria-live="polite"></span></div>' +
-    '<a class="btn btn-sm" href="' + href('find-help.html', { course: code }) + '">Need a tutor instead?</a></div>' +
-    '<div class="filter-panel" id="panel" hidden><div class="grid">' +
+    '<span class="count-pill" id="count" aria-live="polite"></span></div>' +
+    '<a class="btn btn-sm" href="' + href('find-help.html', { course: code }) + '">' + icon('user', 14) + ' Need a tutor instead?</a></div>' +
+    '<div class="card filter-panel" id="panel" hidden>' + tapeHtml('', 'top:-13px;left:auto;right:57px') + '<h2>Filter sessions</h2><div class="filter-grid">' +
     '<div class="field"><label>Format</label>' +
     '<label class="check-row"><input type="checkbox" id="fOnline"> Online</label>' +
     '<label class="check-row"><input type="checkbox" id="fInperson"> In person</label></div>' +
@@ -131,7 +138,7 @@ function build() {
     Object.keys(people).sort().map(function (p) { return '<option>' + esc(p) + '</option>'; }).join('') + '</select></div>' +
     '<div class="field"><label for="fTopic">Topic</label><input type="text" id="fTopic" placeholder="e.g. prototyping"></div>' +
     '</div><button class="btn btn-sm" type="button" id="resetPanel">Reset filters</button></div>' +
-    '<div class="row-flex" id="chips" style="margin-bottom:.8rem" aria-live="polite"></div>' +
+    '<div class="chip-row" id="chips" aria-live="polite"></div>' +
     '<div id="list"></div>';
 
   document.getElementById('filterBtn').addEventListener('click', function () {

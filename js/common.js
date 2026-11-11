@@ -591,18 +591,28 @@ function download(filename, text) {
 /* campus map as a modal */
 function showMap(buildingCode) {
   const b = BUILDINGS[buildingCode];
-  let svg = '<svg class="map-box" viewBox="0 0 560 360" width="100%" role="img" aria-label="Campus map with ' + esc(b.name) + ' highlighted">';
-  svg += '<rect x="20" y="170" width="520" height="14" fill="#cfd5c4"/><rect x="270" y="20" width="14" height="320" fill="#cfd5c4"/>';
-  Object.keys(BUILDINGS).forEach(function (k) {
-    const x = BUILDINGS[k];
-    if (x.school !== b.school) return;
-    const hot = k === buildingCode;
-    svg += '<rect class="bld' + (hot ? ' hot' : '') + '" x="' + x.x + '" y="' + x.y + '" width="100" height="60" rx="6"/>';
-    svg += '<text class="map-label' + (hot ? ' hot' : '') + '" x="' + (x.x + 50) + '" y="' + (x.y + 35) + '" text-anchor="middle">' + k + '</text>';
+  const slots = [[37, 46], [138, 46], [303, 46], [405, 46], [37, 211], [138, 211]];
+  const trees = [[237, 25], [293, 108], [486, 191], [35, 302], [228, 283], [394, 292]];
+  let svg = '<svg class="map-box" viewBox="0 0 516 330" width="100%" role="img" aria-label="Campus map with ' + esc(b.name) + ' highlighted">';
+  svg += '<rect class="map-ground" width="516" height="330"/>';
+  svg += '<rect class="map-road" x="0" y="137" width="516" height="28"/><rect class="map-road" x="248" y="0" width="27" height="330"/>';
+  svg += '<path class="map-edge" d="M0 137H516M0 165H516M248 0V330M275 0V330"/>';
+  trees.forEach(function (t) { svg += '<circle class="map-tree" cx="' + t[0] + '" cy="' + t[1] + '" r="8"/>'; });
+  let hot = null;
+  Object.keys(BUILDINGS).filter(function (k) { return BUILDINGS[k].school === b.school; }).forEach(function (k, i) {
+    const pos = slots[i % slots.length];
+    const on = k === buildingCode;
+    if (on) hot = pos;
+    svg += '<rect class="bld' + (on ? ' hot' : '') + '" x="' + pos[0] + '" y="' + pos[1] + '" width="90" height="54" rx="4"/>';
+    svg += '<text class="map-label" x="' + (pos[0] + 45) + '" y="' + (pos[1] + 31) + '" text-anchor="middle">' + k + '</text>';
   });
+  if (hot) {
+    svg += '<ellipse class="map-ring" cx="' + (hot[0] + 45) + '" cy="' + (hot[1] + 27) + '" rx="57" ry="38" transform="rotate(-3 ' + (hot[0] + 45) + ' ' + (hot[1] + 27) + ')"/>';
+    svg += '<image href="' + asset('pins/red.svg') + '" x="' + (hot[0] + 33) + '" y="' + (hot[1] - 10) + '" width="28" height="28"/>';
+  }
   svg += '</svg>';
-  const html = svg + '<h3 style="margin-top:1rem">' + esc(b.name) + '</h3><p>' + esc(b.how) + '</p>' +
-    '<p class="muted small">Map is a simplified sketch of ' + esc(SCHOOLS[b.school].name) + '.</p>';
+  const html = svg + '<h3 class="map-title">' + esc(b.name) + '</h3><p class="map-how">' + esc(b.how) + '</p>' +
+    '<p class="map-note">Map is a simplified sketch of ' + esc(SCHOOLS[b.school].name) + '.</p>';
   openModal({ title: 'Where is ' + buildingCode + '?', html: html, actions: [{ label: 'Close', kind: 'primary' }] });
 }
 
@@ -624,16 +634,23 @@ function sessionRowHtml(s) {
   let mine = '';
   if (reg) {
     const label = reg.role === 'student' ? 'Registered as student' : (reg.status === 'pending' ? 'Tutor application pending' : (reg.status === 'waitlisted' ? 'Tutor waitlist' : 'Registered as tutor'));
-    mine = '<br><span class="tag info">' + label + '</span>';
+    mine = '<span class="tag info">' + label + '</span>';
   }
+  const d = parseDate(s.date);
   const where = s.building
-    ? esc(BUILDINGS[s.building].name) + '<small>' + esc(s.building + ' ' + s.room) + '</small>'
-    : 'Online<small>Link sent after registering</small>';
+    ? '<span class="tag yellow">' + esc(s.building + ' ' + s.room) + '</span><span class="s-place">' + esc(BUILDINGS[s.building].name) + '</span>'
+    : icon('video', 15) + '<b>Online</b><span class="s-note">Link sent after registering</span>';
+  const known = { 'Sam Singh': '', 'Priya Rao': 'pink', 'Daniel Cho': 'yellow', 'Jordan Lee': 'mint' };
+  const tones = ['pink', '', 'yellow', 'peach', 'mint'];
+  let sum = 0;
+  for (let i = 0; i < s.tutor.length; i++) sum += s.tutor.charCodeAt(i);
+  const tone = known[s.tutor] !== undefined ? known[s.tutor] : tones[sum % tones.length];
   return '<a class="session' + (left <= 0 ? ' is-full' : '') + '" href="' + href('session.html', { id: s.id }) + '">' +
-    '<div class="date">' + fmtDate(s.date) + '<small>' + fmtRange(s.start, s.end) + '</small></div>' +
-    '<div class="where">' + where + '</div>' +
-    '<div><b>' + esc(s.course) + '</b><small class="muted" style="display:block">' + esc(s.topic) + '</small>' + mine + '</div>' +
-    '<div>' + esc(s.tutor) + '</div>' +
-    '<div><span class="tag grey">' + (s.format === 'online' ? 'Online' : 'In person') + '</span></div>' +
-    '<div>' + spots + '</div></a>';
+    '<div class="s-date"><span class="s-dow">' + DAY_NAMES[d.getDay()].slice(0, 3) + '</span><span class="s-day">' + d.getDate() + '</span><span class="s-mon">' + MONTH_NAMES[d.getMonth()].slice(0, 3) + '</span></div>' +
+    '<div class="s-main"><div class="s-top"><span class="tag info">' + esc(s.course) + '</span><span class="s-title">' + esc(s.topic) + '</span></div>' +
+    '<div class="s-loc">' + where + mine + '</div></div>' +
+    '<div class="s-meta"><div class="s-time">' + icon('clock', 15) + '<span>' + fmtRange(s.start, s.end) + '</span></div>' +
+    '<div class="s-who"><span class="avatar sz-26' + (tone ? ' ' + tone : '') + '">' + initials(s.tutor) + '</span><span>' + esc(s.tutor) + '</span></div></div>' +
+    '<div class="s-tags"><div class="s-fmt"><span class="tag grey">' + (s.format === 'online' ? 'Online' : 'In person') + '</span></div>' +
+    '<div class="s-spots">' + spots + '</div></div></a>';
 }
