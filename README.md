@@ -231,6 +231,12 @@ Open a second tab and sign in with sam.singh@mcmaster.ca and tutor123. You land 
 13. Sign out, then sign in as priya.rao@mcmaster.ca with tutor123 to check a second tutor account has its own inbox.
 14. Open `pages/tutor-inbox.html` while signed in as the student, or as a guest. You should get the sign in message, not the board.
 
+## Icons, art and fonts
+
+All the icons and artwork in the `assets/` folder were created by Claude (an AI assistant made by Anthropic) while designing the look of the site in Figma. That covers the line icons in `assets/icons`, the doodles, the push pins, the washi tape, the ruled paper, the torn paper edge, the highlighter strokes and the cork board texture. We took them from that design file and saved them as SVG files. None of it is taken from a stock site or another project.
+
+The only things that come from the web are the fonts in `fonts/`: Bagel Fat One, Gochi Hand and Nunito, downloaded from Google Fonts. They are free to use under the SIL Open Font License. The files are included in the repo so the site works without an internet connection.
+
 ## Known issues
 
 - The date is fixed to November 9, 2026, so "today" never changes.
