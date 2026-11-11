@@ -220,3 +220,12 @@ const POPULAR_QUESTIONS = [
   { q: 'Explain derivatives', course: 'MATH 1ZA3', id: 'q2' },
   { q: 'Weak induction vs strong induction?', course: 'CS 2LC3', id: 'q5' }
 ];
+
+/* sample accounts for signing in without creating one */
+const ACCOUNTS = [
+  { role: 'student', name: 'Alex Morgan', email: 'alex.morgan@mcmaster.ca', password: 'student123', studentId: '400765432', school: 'mcmaster' },
+  { role: 'student', name: 'Jamie Lee', email: 'jamie.lee@mcmaster.ca', password: 'student123', studentId: '400765433', school: 'mcmaster' },
+  { role: 'tutor', name: 'Sam Singh', email: 'sam.singh@mcmaster.ca', password: 'tutor123', studentId: '400123456', school: 'mcmaster', tutorId: 't1' },
+  { role: 'tutor', name: 'Priya Rao', email: 'priya.rao@mcmaster.ca', password: 'tutor123', studentId: '400123457', school: 'mcmaster', tutorId: 't2' },
+  { role: 'tutor', name: 'Daniel Cho', email: 'daniel.cho@mcmaster.ca', password: 'tutor123', studentId: '400123458', school: 'mcmaster', tutorId: 't3' }
+];

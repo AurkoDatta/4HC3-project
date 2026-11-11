@@ -148,6 +148,18 @@ function submit(ev) {
   }
   if (!ok) return;
 
+  if (!isNew) {
+    const known = ACCOUNTS.filter(function (a) { return a.email === email.toLowerCase(); })[0];
+    if (known) {
+      if (known.password !== pw) {
+        setError('password', 'That password is not right.');
+        return;
+      }
+      signIn(known);
+      return;
+    }
+  }
+
   const school = document.getElementById('school').value;
   const nameInput = document.getElementById('name');
   let name = nameInput ? nameInput.value.trim() : email.split('@')[0].replace(/[._]/g, ' ');
