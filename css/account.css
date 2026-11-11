@@ -143,3 +143,8 @@
   #main.p-profile .pf-pair { flex-direction: column; gap: 18px; }
   #main.p-profile .pf-form .doodle { display: none; }
 }
+
+.pf-signout { display: none; }
+@media (max-width: 820px) {
+  .pf-signout { display: block; text-align: center; }
+}

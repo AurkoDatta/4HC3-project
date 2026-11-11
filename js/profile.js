@@ -27,9 +27,14 @@ function render() {
     '<div class="row-flex"><button class="btn btn-primary" type="submit">Save changes</button></div>' +
     doodle('pencil', 'right:-14px;bottom:-14px;width:70px;height:66.5px') + '</form>' +
     '<div class="card pf-demo">' + tapeHtml('pink', 'left:39px') + '<h2>Demo data</h2><p>Clears every registration, request and notification and puts the sample data back.</p>' +
-    '<div><button class="btn btn-danger" type="button" id="reset">Reset demo data</button></div></div>';
+    '<div><button class="btn btn-danger" type="button" id="reset">Reset demo data</button></div></div>' +
+    '<div class="pf-signout"><button class="link-btn" type="button" id="profileSignOut">Sign out</button></div>';
 
   document.getElementById('profileForm').addEventListener('submit', save);
+  document.getElementById('profileSignOut').addEventListener('click', function () {
+    Store.update(function (st) { st.user = null; });
+    location.href = href('index.html');
+  });
   document.getElementById('reset').addEventListener('click', function () {
     const dlg = openModal({
       title: 'Reset demo data?',
