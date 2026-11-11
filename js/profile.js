@@ -7,13 +7,15 @@ function render() {
 
   document.getElementById('main').innerHTML =
     '<div class="page-head"><h1>Profile</h1><p>Used to fill in registration forms for you.</p></div>' +
-    '<form class="card" id="profileForm" style="max-width:640px" novalidate>' +
+    '<form class="sheet pf-form" id="profileForm" novalidate>' + pinHtml('') +
+    '<div class="pf-who"><span class="pf-avatar' + (u.role === 'tutor' ? ' sky' : '') + '" id="pfAvatar">' + esc(initials(u.name)) + '</span>' +
+    '<div class="pf-who-text"><div class="pf-name" id="pfName">' + esc(u.name) + '</div><div class="pf-role" id="pfRole">' + (u.role === 'tutor' ? 'Tutor' : 'Student') + '</div></div></div>' +
     '<div class="field" id="nameField"><label for="pname">Full name <span class="req">*</span></label><input type="text" id="pname" value="' + esc(u.name) + '"></div>' +
     '<div class="field"><label for="pemail">Email</label><input type="email" id="pemail" value="' + esc(u.email) + '" disabled></div>' +
     '<div class="field"><label for="school">University <span class="req">*</span></label><select id="school">' +
     Object.keys(SCHOOLS).map(function (k) { return '<option value="' + k + '"' + (Store.get().school === k ? ' selected' : '') + '>' + SCHOOLS[k].name + '</option>'; }).join('') + '</select></div>' +
-    '<div class="field"><label for="loc">Location</label><input type="text" id="loc" value="' + esc(u.location) + '" placeholder="City"></div>' +
-    '<div class="field"><label for="phone">Phone number</label><input type="text" id="phone" value="' + esc(u.phone) + '" placeholder="Optional"></div>' +
+    '<div class="pf-pair"><div class="field"><label for="loc">Location</label><input type="text" id="loc" value="' + esc(u.location) + '" placeholder="City"></div>' +
+    '<div class="field"><label for="phone">Phone number</label><input type="text" id="phone" value="' + esc(u.phone) + '" placeholder="Optional"></div></div>' +
     '<div class="field"><label for="prole">Status <span class="req">*</span></label><select id="prole"><option value="student"' + (u.role === 'student' ? ' selected' : '') + '>Student</option><option value="tutor"' + (u.role === 'tutor' ? ' selected' : '') + '>Tutor</option></select></div>' +
     '<div class="field" id="sidField"><label for="sid">Student ID ' + helpDot('Needed to volunteer or tutor, so we can check you are enrolled.') + '</label><input type="text" id="sid" inputmode="numeric" value="' + esc(u.studentId) + '" placeholder="9 digits"></div>' +
     '<div class="field"><label>Teaching points ' + helpDot('A rough measure of tutoring experience. Harder courses need more points. You earn them by helping at sessions and from good feedback.') + '</label>' +
@@ -22,23 +24,30 @@ function render() {
       ? '<div class="field"><label for="tutorId">Tutor account (for demos)</label><select id="tutorId">' + TUTORS.map(function (t) { return '<option value="' + t.id + '"' + (u.tutorId === t.id ? ' selected' : '') + '>' + esc(t.name) + '</option>'; }).join('') + '</select>' +
         '<div class="hint">Picks which tutor you are acting as, so you can answer requests sent to someone else.</div></div>'
       : '') +
-    '<div class="row-flex"><button class="btn btn-primary" type="submit">Save changes</button></div></form>' +
-    '<div class="card" style="max-width:640px"><h2>Demo data</h2><p class="muted">Clears every registration, request and notification and puts the sample data back.</p>' +
-    '<button class="btn btn-danger" type="button" id="reset">Reset demo data</button></div>';
+    '<div class="row-flex"><button class="btn btn-primary" type="submit">Save changes</button></div>' +
+    doodle('pencil', 'right:-14px;bottom:-14px;width:70px;height:66.5px') + '</form>' +
+    '<div class="card pf-demo">' + tapeHtml('pink', 'left:39px') + '<h2>Demo data</h2><p>Clears every registration, request and notification and puts the sample data back.</p>' +
+    '<div><button class="btn btn-danger" type="button" id="reset">Reset demo data</button></div></div>';
 
   document.getElementById('profileForm').addEventListener('submit', save);
   document.getElementById('reset').addEventListener('click', function () {
-    confirmModal({
+    const dlg = openModal({
       title: 'Reset demo data?',
-      html: '<p>This cannot be undone. You will stay signed in.</p>',
-      confirmLabel: 'Reset',
-      kind: 'danger'
-    }, function () {
-      Store.reset();
-      toast('Demo data reset.');
-      render();
-      renderBell();
+      html: '<p class="plain">This cannot be undone. You will stay signed in.</p>',
+      actions: [
+        { label: 'Cancel', kind: 'ghost' },
+        {
+          label: 'Reset', kind: 'danger', onClick: function () {
+            Store.reset();
+            toast('Demo data reset.');
+            render();
+            renderBell();
+          }
+        }
+      ],
+      tapeStyle: 'left:calc(50% - 48px);top:-11.4px'
     });
+    dlg.el.classList.add('dlg-account');
   });
 }
 
@@ -85,6 +94,8 @@ function save(ev) {
     return;
   }
   toast('Profile saved.');
+  document.getElementById('pfName').textContent = name;
+  document.getElementById('pfAvatar').textContent = initials(name);
   shell('');
 }
 
