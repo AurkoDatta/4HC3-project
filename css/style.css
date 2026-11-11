@@ -1082,3 +1082,6 @@ input[type=time]::-webkit-calendar-picker-indicator {
   .toast { max-width: none; }
 }
 .notif-panel .head .link-btn { font-family: var(--font-body); font-size: 13.5px; line-height: 1.5; }
+textarea { resize: none; }
+input[type=number] { appearance: textfield; -moz-appearance: textfield; }
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
