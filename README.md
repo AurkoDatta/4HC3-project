@@ -126,6 +126,63 @@ The tutor's page. Stat notes at the top show hours, paid hours, volunteer hours 
 - `js/store.js` keeps the state. Registrations, requests, notifications and feedback live in `localStorage` under `universityTutor.state.v1`, and the signed in user is in `sessionStorage` of the tab.
 - `js/data.js` is every course, tutor, session, past question and account. Change it if you want different sample data.
 
+## The horizontal and vertical prototypes
+
+The milestone asks for one horizontal prototype and at least two vertical ones. They are the same app, they just describe it in two ways.
+
+### Horizontal prototype
+
+The horizontal prototype is the whole system at once, wide but not deep. It covers our three major tasks and all the pages around them, so you can walk through the full concept from the sign in page to the end of a tutoring session:
+
+- Task A, a student finds a help centre session and registers: Help centre, Course sessions, Session details, My events.
+- Task B, a tutor answers a request and books a session: Request inbox.
+- Task C, a student finds a tutor and completes a session: Find help, Tutors, Session notes, Feedback, with Past material and Calendar around it.
+- The pages that hold it together: Sign in, Home and Profile, plus the header and the notification bell on every page.
+
+How to look at it:
+
+1. Open `index.html` and press "Visit as a guest". Click every link in the header (Home, Help centre, Find help, Past material). The pages that need an account (My events, Calendar, Past material, Profile and so on) show a "Sign in first" page instead of the content.
+2. Go back, press "Use demo student" and click through every link in the header: Home, Help centre, Find help, Past material, Calendar, My events, then the bell and your name (Profile).
+3. Sign out, press "Use demo tutor" and click through the header: Request inbox, Help centre, Calendar, My events, bell, Profile.
+4. Optionally shrink the window to about 375 px wide and repeat step 2, the layout changes to the phone version.
+
+Nothing special is needed for this one, it works from a fresh start.
+
+### Vertical prototypes
+
+A vertical prototype is one task followed all the way through with real behaviour behind it. We built all three tasks that deep, and the two that match our HTG from Milestone 2 are the first two below. The steps need a clean start (Profile, then "Reset demo data") and two Chrome tabs, because the student and the tutor are different people.
+
+**Vertical 1: the student finds a tutor and completes a session (Task C)**
+Pages: `pages/find-help.html`, `pages/tutors.html`, `pages/session-notes.html`, `pages/feedback.html`, and `pages/past-material.html` for rebooking.
+
+1. In tab 1 sign in as alex.morgan@mcmaster.ca (student123). Open the request inbox of the tutor in tab 2 first, so it is ready: sign in there as sam.singh@mcmaster.ca (tutor123).
+2. Tab 1: Find help. Type CS 4HC3, choose the kind of help, write a short description and continue.
+3. On the tutor list pick Sam Singh and press "Request session". Pick a time (up to three), write a message and send.
+4. Tab 2: the new request from Alex shows up in the New column without a refresh. Accept it and book a time (this part belongs to the second vertical prototype).
+5. Tab 1: My events now shows the request as accepted. Open the session. Press "I am here" for an in person session, or "Join session" for an online one, then "End session".
+6. The notes appear and can be downloaded. Press "Leave feedback", give a rating, a comment and a yes or no, and send.
+7. To rebook, open Past material, view the past session and press "Book this tutor again". The request form opens already filled in.
+
+**Vertical 2: the tutor responds to a request and books a session (Task B)**
+Pages: `pages/tutor-inbox.html`.
+
+1. Tab 2, signed in as sam.singh@mcmaster.ca (tutor123). If you did Vertical 1 there is already a request from Alex, otherwise use the ones that come with the sample data (Ava Mills and Noah Kim).
+2. Open "View history" on a card, then Accept one: pick a time (the student's preferred times are green, booked times are grey), set the format and place, confirm.
+3. Decline another request with a reason and use Undo in the toast.
+4. Drag a card from New to Active, then try New straight to Done, or any card backwards. The board refuses it with an error message. Cards only move forward.
+5. On an Active card try Message, Reschedule and finally "Mark complete" with a number of hours between 0.5 and 4.
+6. Press "Export volunteer hours" and check the stat notes at the top updated.
+
+**Vertical 3: the student finds a help centre session and registers (Task A)**
+Pages: `pages/help-centre.html`, `pages/course.html`, `pages/session.html`, `pages/my-events.html`.
+
+1. Signed in as the student, open Help centre and search for 4HC3 or for a topic such as derivatives.
+2. Open a course, use the filter panel, open a session.
+3. Press "Attend as a student", confirm, and look for the entry in My events. Cancel it and use Undo.
+4. As a volunteer instead: press "Volunteer as a tutor" with a valid 9 digit student ID. The status is pending, and after about 15 seconds it becomes accepted or waitlisted and a notification arrives. A MATH course is refused on purpose, the demo user does not have enough teaching points for it.
+
+The full step by step lists for everything, including all the error cases, are in the next section.
+
 ## Checking everything works
 
 Start with a clean slate: open `index.html`, sign in with any account, go to Profile and press "Reset demo data". The two lists below are meant to be done in order. It works best with two Chrome tabs, one for the student and one for the tutor, because a few steps need the other person to act.
